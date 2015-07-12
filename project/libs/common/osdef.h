@@ -42,7 +42,7 @@
 #	define OS_POSIX
 #endif
 
-#if defined(OS_WINDOWS) || defined(BLACKBERRY)
+#if defined(OS_WINDOWS) || defined(BLACKBERRY) || defined(DEVKITARM3DS)
 #	define LITTLE_ENDIAN 1
 #	define BIG_ENDIAN 2
 #	define BYTE_ORDER LITTLE_ENDIAN

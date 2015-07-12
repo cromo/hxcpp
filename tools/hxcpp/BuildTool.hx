@@ -1243,6 +1243,16 @@ class BuildTool
          defines.set("linux","linux");
          defines.set("BINDIR",m64 ? "Cygwin64":"Cygwin");
       }
+      else if (defines.exists("devkitarm3ds"))
+      {
+         defines.set("toolchain", "linux");
+         defines.set("xcompile", "1");
+         defines.set("linux","linux");
+         defines.set("devkitarm", "devkitarm");
+         defines.set("devkitarm3ds", "devkitarm3ds");
+         defines.set("BINDIR", "3ds");
+         defines.set("HXCPP_NO_M32", "1");
+      }
       else if ( (new EReg("window","i")).match(os) )
       {
          defines.set("windows_host","1");

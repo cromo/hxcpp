@@ -17,6 +17,8 @@
 #include <hx/CFFI.h>
 #ifdef EPPC
 #include <memory>
+#elif defined(DEVKITARM3DS)
+#include <string.h>
 #else
 #include <memory.h>
 #endif

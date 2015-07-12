@@ -19,7 +19,11 @@
 /*																			*/
 /* ************************************************************************ */
 #include <stdlib.h>
+#ifdef DEVKITARM3DS
+#include <string.h>
+#else
 #include <memory.h>
+#endif
 #include <stdio.h>
 #include "my_proto.h"
 

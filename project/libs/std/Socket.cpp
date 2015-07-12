@@ -15,7 +15,7 @@
 /*																			*/
 /* ************************************************************************ */
 
-#if !defined(HX_WINRT) && !defined(EPPC)
+#if !defined(HX_WINRT) && !defined(EPPC) && !defined(DEVKITARM3DS)
 
 #include <string.h>
 #include <hx/CFFI.h>

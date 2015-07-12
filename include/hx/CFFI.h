@@ -15,7 +15,11 @@ typedef struct _buffer  *buffer;
 #include "OS.h"
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef DEVKITARM3DS
+#include <string.h>
+#else
 #include <memory.h>
+#endif
 #if defined(BLACKBERRY)
 using namespace std;
 #endif

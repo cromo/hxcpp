@@ -44,7 +44,7 @@
 #	define SOCKET_ERROR (-1)
 #endif
 
-#if defined(OS_WINDOWS) || defined(OS_MAC)
+#if defined(OS_WINDOWS) || defined(OS_MAC) || defined(DEVKITARM3DS)
 #	define MSG_NOSIGNAL 0
 #endif
 
@@ -130,7 +130,7 @@ PHOST phost_resolve( const char *host ) {
 	PHOST ip = inet_addr(host);
 	if( ip == INADDR_NONE ) {
 		struct hostent *h;
-#	if defined(OS_WINDOWS) || defined(OS_MAC) || defined(BLACKBERRY)
+#	if defined(OS_WINDOWS) || defined(OS_MAC) || defined(BLACKBERRY) || defined(DEVKITARM3DS)
 		h = gethostbyname(host);
 #	else
 		struct hostent hbase;
@@ -140,7 +140,11 @@ PHOST phost_resolve( const char *host ) {
 #	endif
 		if( h == NULL )
 			return UNRESOLVED_HOST;
+# if defined(DEVKITARM3DS)
+		ip = *((unsigned int*)h->h_addr_list[0]);
+# else
 		ip = *((unsigned int*)h->h_addr);
+# endif
 	}
 	return ip;
 }
@@ -197,8 +201,10 @@ SERR psock_set_blocking( PSOCK s, int block ) {
 }
 
 SERR psock_set_fastsend( PSOCK s, int fast ) {
+#ifndef DEVKITARM3DS
 	if( setsockopt(s,IPPROTO_TCP,TCP_NODELAY,(char*)&fast,sizeof(fast)) )
 		return block_error();
+#endif
 	return PS_OK;
 }
 

@@ -61,7 +61,7 @@ class Builder
 
             switch(target)
             {
-               case "ios", "android", "blackberry", "tizen", "emscripten", "webos", "windows", "linux", "mac", "mingw":
+               case "ios", "android", "blackberry", "tizen", "emscripten", "webos", "windows", "linux", "mac", "mingw", "devkitarm3ds":
                   defaultTarget = false;
                   if (linkStatic)
                   {
@@ -159,6 +159,9 @@ class Builder
                
                case "webos":
                   validArchs.set("armv7", ["-Dwebos", staticFlag] );
+
+               case "devkitarm3ds":
+                  validArchs.set("armv6", ["-Ddevkitarm3ds", staticFlag] );
                
             }
 

@@ -24,6 +24,14 @@
       <set name="HXCPP_AR" value="arm-linux-gnueabihf-ar" />
       <set name="HXCPP_RANLIB" value="arm-linux-gnueabihf-ranlib" />
    </section>
+   <section if="devkitarm">
+      <path name="${DEVKITARM}/bin/" unless="HXCPP_XCOMPILE_DEVKITARM_PATH" />
+      <path name="${HXCPP_XCOMPILE_DEVKITARM_PATH}" if="HXCPP_XCOMPILE_DEVKITARM_PATH" />
+      <set name="CXX" value="arm-none-eabi-g++" />
+      <set name="HXCPP_STRIP" value="arm-none-eabi-strip" />
+      <set name="HXCPP_AR" value="arm-none-eabi-ar" />
+      <set name="HXCPP_RANLIB" value="arm-none-eabi-ranlib" />
+   </section>
 </section>
 
 <include name="toolchain/gcc-toolchain.xml"/>
@@ -40,9 +48,15 @@
   <flag value="-O2" unless="debug"/>
   <flag value="-fpic"/>
   <flag value="-fPIC"/>
+  <section if="devkitarm3ds">
+    <flag value="-march=armv6k"/>
+    <flag value="-mtune=mpcore"/>
+    <flag value="-mfloat-abi=hard"/>
+  </section>
   <cppflag value="-Wno-invalid-offsetof" />
   <flag value="-DHX_LINUX"/>
   <flag value="-DRASPBERRYPI=RASPBERRYPI" if="rpi"/>
+  <flag value="-DDEVKITARM3DS" if="devkitarm3ds"/>
   <flag value="-DHXCPP_MULTI_THREADED" if="HXCPP_MULTI_THREADED"/>
   <flag value="-DHXCPP_BIG_ENDIAN" if="HXCPP_BIG_ENDIAN"/>
   <include name="toolchain/common-defines.xml" />
@@ -50,6 +64,7 @@
   <flag value="-m64" if="HXCPP_M64"/>
   <flag value="-DHXCPP_M64" if="HXCPP_M64"/>
   <flag value="-I${HXCPP}/include"/>
+  <flag value="-I${DEVKITPRO}/libctru/include" if="devkitarm3ds"/>
   <objdir value="obj/linux${OBJEXT}/"/>
   <outflag value="-o"/>
   <ext value=".o"/>
@@ -79,7 +94,15 @@
   <flag value="-rdynamic"/>
   <flag value="-m32" unless="HXCPP_M64"/>
   <flag value="-m64" if="HXCPP_M64"/>
-  <lib name="-ldl"/>
+  <lib name="-ldl" unless="devkitarm"/>
+  <section if="devkitarm3ds">
+    <flag value="-march=armv6k"/>
+    <flag value="-mtune=mpcore"/>
+    <flag value="-mfloat-abi=hard"/>
+    <flag value="-specs=3dsx.specs"/>
+    <lib name="-L${DEVKITPRO}/libctru/lib"/>
+    <lib name="-lctru"/>
+  </section>
   <ext value=""/>
   <outflag value="-o "/>
 </linker>

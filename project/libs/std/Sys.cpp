@@ -34,7 +34,7 @@ int __sys_prims() { return 0; }
 #       include <locale.h>
 #else
 #	include <errno.h>
-#ifndef EPPC
+#if !defined(EPPC) && !defined(DEVKITARM3DS)
 #	include <unistd.h>
 #	include <dirent.h>
 #	include <termios.h>
@@ -44,7 +44,7 @@ int __sys_prims() { return 0; }
 #	include <limits.h>
 #ifndef ANDROID
 #	include <locale.h>
-#if !defined(BLACKBERRY) && !defined(EPPC) && !defined(GCW0)
+#if !defined(BLACKBERRY) && !defined(EPPC) && !defined(GCW0) && !defined(DEVKITARM3DS)
 #	include <xlocale.h>
 #endif
 #endif
@@ -139,8 +139,8 @@ static value sys_sleep( value f ) {
 
 #elif defined(NEKO_WINDOWS)
 	Sleep((DWORD)(val_number(f) * 1000));
-#elif defined(EPPC)
-//TODO: Implement sys_sleep for EPPC
+#elif defined(EPPC) || defined(DEVKITARM3DS)
+//TODO: Implement sys_sleep for EPPC and DEVKITARM3DS
 #else
 	{
 		struct timespec t;
@@ -199,6 +199,8 @@ static value get_cwd() {
    return alloc_string("ms-appdata:///local/");
    #elif defined(EPPC)
    return alloc_null();
+   #elif defined(DEVKITARM3DS)
+   return alloc_string("/");
    #else
 	char buf[256];
 	int l;
@@ -218,7 +220,7 @@ static value get_cwd() {
 	<doc>Set current working directory</doc>
 **/
 static value set_cwd( value d ) {
-   #if !defined(HX_WINRT) && !defined(EPPC)
+   #if !defined(HX_WINRT) && !defined(EPPC) && !defined(DEVKITARM3DS)
 	val_check(d,string);
 	if( chdir(val_string(d)) )
 		return alloc_null();
@@ -260,6 +262,8 @@ static value sys_string() {
 	return alloc_string("Emscripten");
 #elif defined(EPPC)
 	return alloc_string("EPPC");
+#elif defined(DEVKITARM3DS)
+	return alloc_string("3DS");
 #else
 #error Unknow system string
 #endif
@@ -284,7 +288,7 @@ static value sys_is64() {
 	<doc>Run the shell command and return exit code</doc>
 **/
 static value sys_command( value cmd ) {
-   #if defined(HX_WINRT) || defined(EMSCRIPTEN) || defined(EPPC)
+   #if defined(HX_WINRT) || defined(EMSCRIPTEN) || defined(EPPC) || defined(DEVKITARM3DS)
 	return alloc_int( -1 );
    #else
 	val_check(cmd,string);
@@ -344,7 +348,7 @@ static value file_exists( value path ) {
 	<doc>Delete the file. Exception on error.</doc>
 **/
 static value file_delete( value path ) {
-	#ifdef EPPC
+	#if defined(EPPC) || defined(DEVKITARM3DS)
 	return alloc_bool(true);
 	#else
 	val_check(path,string);
@@ -504,7 +508,7 @@ static value sys_create_dir( value path, value mode ) {
 	<doc>Remove a directory. Exception on error</doc>
 **/
 static value sys_remove_dir( value path ) {
-	#ifdef EPPC
+	#if defined(EPPC) || defined(DEVKITARM3DS)
 	return alloc_bool(true);
 	#else
 	val_check(path,string);
@@ -535,6 +539,9 @@ static value sys_time() {
 	time_t tod;
 	time(&tod);
 	return alloc_float ((double)tod);
+#elif defined(DEVKITARM3DS)
+	// TODO: a proper time function for 3DS.
+	return alloc_float(0);
 #else
 	struct timeval tv;
 	if( gettimeofday(&tv,NULL) != 0 )
@@ -559,6 +566,9 @@ static value sys_cpu_time() {
 	return alloc_float( ((double)(utime.dwHighDateTime+stime.dwHighDateTime)) * 65.536 * 6.5536 + (((double)utime.dwLowDateTime + (double)stime.dwLowDateTime) / 10000000) );
 #elif defined(EPPC)
 	return alloc_float ((double)(CLOCKS_PER_SEC * clock()));
+#elif defined(DEVKITARM3DS)
+	// TODO: 3DS CPU time (if possible)
+	return alloc_float(0);
 #else
 	struct tms t;
 	times(&t);
@@ -618,7 +628,7 @@ static value sys_read_dir( value p) {
 			break;
 	}
 	FindClose(handle);
-#elif !defined(EPPC)
+#elif !defined(EPPC) && !defined(DEVKITARM3DS)
 	DIR *d;
 	struct dirent *e;
    const char *name = val_string(p);
@@ -693,7 +703,7 @@ static value sys_exe_path() {
 	if( _NSGetExecutablePath(path, &path_len) )
 		return alloc_null();
 	return alloc_string(path);
-#elif defined(EPPC)
+#elif defined(EPPC) || defined(DEVKITARM3DS)
 	return alloc_string("");
 #else
 	const char *p = getenv("_");
@@ -765,7 +775,7 @@ static value sys_env() {
 	<doc>Read a character from stdin with or without echo</doc>
 **/
 static value sys_getch( value b ) {
-#if defined(HX_WINRT) || defined(EMSCRIPTEN) || defined(EPPC)
+#if defined(HX_WINRT) || defined(EMSCRIPTEN) || defined(EPPC) || defined(DEVKITARM3DS)
    return alloc_null();
 #elif defined(NEKO_WINDOWS)
 	val_check(b,bool);
@@ -800,7 +810,7 @@ static value sys_getch( value b ) {
 static value sys_get_pid() {
 #	ifdef NEKO_WINDOWS
 	return alloc_int(GetCurrentProcessId());
-#elif defined(EPPC)
+#elif defined(EPPC) || defined(DEVKITARM3DS)
 	return alloc_int(1);
 #	else
 	return alloc_int(getpid());
