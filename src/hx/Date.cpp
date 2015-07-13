@@ -354,7 +354,11 @@ double __hxcpp_timezone_offset(double inSeconds)
 
    return mktime(&localTime) - mktime(&gmTime);
    #else
-   return localTime.tm_gmtoff;
+     #ifdef DEVKITARM3DS
+       return 0;
+     #else
+       return localTime.tm_gmtoff;
+     #endif
    #endif
 }
 

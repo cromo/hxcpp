@@ -303,6 +303,8 @@ struct ProfileEntry
 #else
             // TODO
 #endif
+#elif DEVKITARM3DS
+  // TODO
 #else
             struct timespec t;
             struct timespec tmp;

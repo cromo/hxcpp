@@ -159,8 +159,8 @@
   <files id="__externs__" />
   <files id="runtime" unless="dll_import" />
   <files id="cppia" if="scriptable" />
-  <lib name="-lpthread" if="linux" unless="static_link" />
-  <lib name="-ldl" if="linux" unless="static_link" />
+  <lib name="-lpthread" if="linux" unless="static_link||devkitarm"/>
+  <lib name="-ldl" if="linux" unless="static_link||devkitarm" />
 </target>
 
 

@@ -91,8 +91,8 @@
   <exe name="${CXX}" if="CXX" />
   <fromfile value="" if="GCC_OLD" />
   <flag value="-debug" if="debug"/>
-  <flag value="-rdynamic"/>
-  <flag value="-m32" unless="HXCPP_M64"/>
+  <flag value="-rdynamic" unless="devkitarm"/>
+  <flag value="-m32" unless="noM32||HXCPP_M64"/>
   <flag value="-m64" if="HXCPP_M64"/>
   <lib name="-ldl" unless="devkitarm"/>
   <section if="devkitarm3ds">
